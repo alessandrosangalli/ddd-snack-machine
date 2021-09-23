@@ -37,6 +37,10 @@ func (snackMachine *SnackMachine) Buy(snack snack.Snack) (bool, error) {
 		return false, errors.NewInsufficientStock(snack)
 	}
 
+	if !snackMachine.getTotalMoney().GreaterThan(snack.Price) {
+		return false, errors.NewNoEnoughMoney()
+	}
+
 	return true, nil
 }
 
