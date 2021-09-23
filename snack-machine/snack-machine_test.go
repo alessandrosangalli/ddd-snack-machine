@@ -83,35 +83,24 @@ func TestBuySnackNotAvaliable(t *testing.T) {
 	moneyToInsert := []money.Money{}
 	snackMachine := NewSnackMachine(moneyToInsert...)
 
-	res, err := snackMachine.Buy(snack.Chocolate())
-	expected := false
+	_, err := snackMachine.Buy(snack.Chocolate())
 	insufficientStockChocolate := snackMachineErrors.NewInsufficientStock(snack.Chocolate())
 
 	if err.Error() != insufficientStockChocolate.Error() {
 		t.Errorf("Error on buy snack, expected: %s, current: %s", insufficientStockChocolate, err)
-	}
-
-	if res != expected {
-		t.Errorf("Error on buy snack, expected: %t, current: %t", expected, res)
-
-		if err != nil {
-			t.Errorf("err: %s", err.Error())
-		}
 	}
 }
 
 func TestBuySnackNoEnoughMoney(t *testing.T) {
 	moneyToInsert := []money.Money{}
 	snackMachine := NewSnackMachine(moneyToInsert...)
+	snackMachine.AddSnack(snack.Chocolate())
 
-	res, err := snackMachine.Buy(snack.Chocolate())
-	expected := false
+	_, err := snackMachine.Buy(snack.Chocolate())
+	noEnoughMoney := snackMachineErrors.NewNoEnoughMoney()
 
-	if res != expected {
-		t.Errorf("Error on buy snack, expected: %t, current: %t", expected, res)
-
-		if err != nil {
-			t.Errorf("err: %s", err.Error())
-		}
+	if err.Error() != noEnoughMoney.Error() {
+		t.Errorf("Error on buy snack, expected: %s, current: %s", noEnoughMoney, err)
 	}
+
 }
