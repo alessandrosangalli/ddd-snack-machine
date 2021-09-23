@@ -9,23 +9,23 @@ import (
 )
 
 type SnackMachine struct {
-	insertedMoney []money.Money
-	snacks        []snack.Snack
+	totalMoney decimal.Decimal
+	snacks     []snack.Snack
 }
 
 func NewSnackMachine(inputMoney ...money.Money) *SnackMachine {
-	snackMachine := SnackMachine{insertedMoney: inputMoney}
+	totalMoney := decimal.NewFromInt(0)
+
+	for _, m := range inputMoney {
+		totalMoney = decimal.Sum(totalMoney, m.Value)
+	}
+
+	snackMachine := SnackMachine{totalMoney: totalMoney}
 	return &snackMachine
 }
 
 func (snackMachine *SnackMachine) getTotalMoney() decimal.Decimal {
-	total := decimal.NewFromInt(0)
-
-	for _, m := range snackMachine.insertedMoney {
-		total = decimal.Sum(total, m.Value)
-	}
-
-	return total
+	return snackMachine.totalMoney
 }
 
 func (snackMachine *SnackMachine) AddSnack(snack ...snack.Snack) {
@@ -40,6 +40,8 @@ func (snackMachine *SnackMachine) Buy(snack snack.Snack) (bool, error) {
 	if !snackMachine.getTotalMoney().GreaterThan(snack.Price) {
 		return false, errors.NewNoEnoughMoney()
 	}
+
+	snackMachine.totalMoney = snackMachine.totalMoney.Sub(snack.Price)
 
 	return true, nil
 }
