@@ -4,7 +4,6 @@ import (
 	"ddd-snack-machine/money"
 	"ddd-snack-machine/snack"
 	snackMachineErrors "ddd-snack-machine/snack-machine/errors"
-	"reflect"
 	"testing"
 
 	"github.com/shopspring/decimal"
@@ -23,42 +22,6 @@ func TestTotalMoney(t *testing.T) {
 		expectedValue, _ := expected.Float64()
 		totalMoneyValue, _ := totalMoney.Float64()
 		t.Errorf("Error on total value, expected: %f, current: %f", expectedValue, totalMoneyValue)
-	}
-}
-
-func TestInsertedMoneyAllTypes(t *testing.T) {
-	moneyToInsert := []money.Money{
-		money.OneCent(),
-		money.TenCents(),
-		money.TwentyFiveCents(),
-		money.OneDollar(),
-		money.FiveDollars(),
-		money.TwentyDollars(),
-	}
-	snackMachine := NewSnackMachine(moneyToInsert...)
-
-	if !reflect.DeepEqual(snackMachine.insertedMoney, moneyToInsert) {
-		t.Errorf("Inserted money is not equal snack machine money")
-	}
-}
-
-func TestInsertedMoneyFiveDollars(t *testing.T) {
-	moneyToInsert := []money.Money{
-		money.TwentyDollars(),
-	}
-	snackMachine := NewSnackMachine(moneyToInsert...)
-
-	if !reflect.DeepEqual(snackMachine.insertedMoney, moneyToInsert) {
-		t.Errorf("Inserted money is not equal snack machine money")
-	}
-}
-
-func TestInsertedMoneyEmpty(t *testing.T) {
-	moneyToInsert := []money.Money{}
-	snackMachine := NewSnackMachine(moneyToInsert...)
-
-	if !reflect.DeepEqual(snackMachine.insertedMoney, moneyToInsert) {
-		t.Error("Inserted money is not equal snack machine money")
 	}
 }
 
@@ -101,5 +64,21 @@ func TestBuySnackNoEnoughMoney(t *testing.T) {
 
 	if err.Error() != noEnoughMoney.Error() {
 		t.Errorf("Error on buy snack, expected: %s, current: %s", noEnoughMoney, err)
+	}
+}
+
+func TestTotalMoneyAfterBuy(t *testing.T) {
+	fiveDollars := money.FiveDollars()
+	chocolate := snack.Chocolate()
+	moneyToInsert := []money.Money{fiveDollars}
+	snackMachine := NewSnackMachine(moneyToInsert...)
+	snackMachine.AddSnack(chocolate)
+	snackMachine.Buy(chocolate)
+
+	expectedLeftover := fiveDollars.Value.Sub(chocolate.Price)
+	currentLeftover := snackMachine.getTotalMoney()
+
+	if !expectedLeftover.Equal(currentLeftover) {
+		t.Errorf("Error on total money after buy, expected: %s, current: %s", expectedLeftover, currentLeftover)
 	}
 }
