@@ -15,7 +15,7 @@ func NewSnackMachine(inputMoney ...money.Money) *SnackMachine {
 	return &snackMachine
 }
 
-func (snackMachine *SnackMachine) GetTotalMoney() decimal.Decimal {
+func (snackMachine *SnackMachine) getTotalMoney() decimal.Decimal {
 	total := decimal.NewFromInt(0)
 
 	for _, m := range snackMachine.insertedMoney {

@@ -7,20 +7,19 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func TestInsertMoney(t *testing.T) {
+func TestTotalMoney(t *testing.T) {
 	snackMachine := NewSnackMachine(
 		money.OneCent(),
 		money.TenCents(),
 		money.TwentyDollars(),
 	)
 
-	totalMoney := snackMachine.GetTotalMoney()
+	totalMoney := snackMachine.getTotalMoney()
 	expected := decimal.NewFromFloat(20.11)
 
 	if !totalMoney.Equal(expected) {
 		expectedValue, _ := expected.Float64()
 		totalMoneyValue, _ := totalMoney.Float64()
-		t.Errorf("Error on insert value, expected: %f, current: %f", expectedValue, totalMoneyValue)
+		t.Errorf("Error on total value, expected: %f, current: %f", expectedValue, totalMoneyValue)
 	}
-
 }
