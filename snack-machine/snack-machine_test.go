@@ -63,7 +63,7 @@ func TestInsertedMoneyEmpty(t *testing.T) {
 }
 
 func TestBuySnack(t *testing.T) {
-	moneyToInsert := []money.Money{}
+	moneyToInsert := []money.Money{money.FiveDollars()}
 	snackMachine := NewSnackMachine(moneyToInsert...)
 	snackMachine.AddSnack(snack.Chocolate())
 
@@ -102,5 +102,4 @@ func TestBuySnackNoEnoughMoney(t *testing.T) {
 	if err.Error() != noEnoughMoney.Error() {
 		t.Errorf("Error on buy snack, expected: %s, current: %s", noEnoughMoney, err)
 	}
-
 }
