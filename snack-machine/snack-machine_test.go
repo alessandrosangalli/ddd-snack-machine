@@ -3,6 +3,7 @@ package snack_machine
 import (
 	"ddd-snack-machine/money"
 	"ddd-snack-machine/snack"
+	snackMachineErrors "ddd-snack-machine/snack-machine/errors"
 	"reflect"
 	"testing"
 
@@ -79,6 +80,27 @@ func TestBuySnack(t *testing.T) {
 }
 
 func TestBuySnackNotAvaliable(t *testing.T) {
+	moneyToInsert := []money.Money{}
+	snackMachine := NewSnackMachine(moneyToInsert...)
+
+	res, err := snackMachine.Buy(snack.Chocolate())
+	expected := false
+	insufficientStockChocolate := snackMachineErrors.NewInsufficientStock(snack.Chocolate())
+
+	if err.Error() != insufficientStockChocolate.Error() {
+		t.Errorf("Error on buy snack, expected: %s, current: %s", insufficientStockChocolate, err)
+	}
+
+	if res != expected {
+		t.Errorf("Error on buy snack, expected: %t, current: %t", expected, res)
+
+		if err != nil {
+			t.Errorf("err: %s", err.Error())
+		}
+	}
+}
+
+func TestBuySnackNoEnoughMoney(t *testing.T) {
 	moneyToInsert := []money.Money{}
 	snackMachine := NewSnackMachine(moneyToInsert...)
 
